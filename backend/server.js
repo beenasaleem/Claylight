@@ -1,33 +1,39 @@
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 import productRoutes from "./routes/products.js";
-import dotenv from "dotenv";
-import { v2 as cloudinary } from "cloudinary";
-
+import bannerRoutes from "./routes/banners.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import categoryRoutes from "./routes/categories.js";
 
 
 const app = express();
-const PORT = 5000;
 
-// Parse JSON bodies
+/* MIDDLEWARE */
+app.use(cors());
 app.use(express.json());
 
-dotenv.config();
+/* PATH SETUP */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+/* 🔴 STATIC FILES — MUST COME FIRST */
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-
-// Connect to MongoDB
+/* DATABASE */
 mongoose
   .connect("mongodb://127.0.0.1:27017/claylight")
   .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log("MongoDB connection error:", err));
+  .catch((err) => console.error(err));
 
-// Routes
+/* ROUTES */
 app.use("/api/products", productRoutes);
+app.use("/api/banners", bannerRoutes);
+app.use("/api/categories", categoryRoutes);
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+/* SERVER */
+app.listen(5000, () => {
+  console.log("Server running on port 5000");
+});

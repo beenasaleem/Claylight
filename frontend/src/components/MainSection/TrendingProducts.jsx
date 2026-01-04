@@ -1,51 +1,114 @@
 import { useState, useEffect } from "react";
+import saleBanner from "../../assets/sale.png";
 
 const TrendingProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [hoveredId, setHoveredId] = useState(null); // ✅ MOVED HERE
 
   useEffect(() => {
-    fetch("https://makeup-api.herokuapp.com/api/v1/products.json?brand=maybelline")
-      .then((res) => res.json())
+    fetch("http://localhost:5000/api/products", { cache: "no-store" })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch products");
+        return res.json();
+      })
       .then((data) => {
-        setProducts(data.slice(0, 4)); // only 4 products
+        setProducts(data.slice(3, 6));
         setLoading(false);
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
         setError("Failed to load products.");
         setLoading(false);
       });
   }, []);
 
-  if (loading) return <p className="text-center mt-10">Loading trending products...</p>;
-  if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
+  if (loading)
+    return <p className="text-center mt-10">Loading trending products...</p>;
+
+  if (error)
+    return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   return (
-    <div className="w-full bg-purple-50 p-6 rounded shadow">
-      <h2 className="text-2xl font-bold mb-6 text-center">Top Trending</h2>
+    <section className="w-full px-3 py-0">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 items-start">
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        {/* 🔥 SALE BANNER (LEFT) */}
+        <div className="md:col-span-1">
+          <img
+            src={saleBanner}
+            alt="Up to 60% Off"
+            className="w-full h-full rounded-2xl object-cover"
+          />
+        </div>
+
+        {/* 🛍 PRODUCTS (RIGHT) */}
         {products.map((product) => (
           <div
-            key={product.id}
-            className="rounded-2xl overflow-hidden shadow-md relative flex justify-center items-center
-                       bg-gradient-to-tr from-purple-100 via-pink-100 to-orange-100
-                       hover:scale-105 transition-transform duration-300"
+            key={product._id}
+            className="bg-white transition"
+            onMouseEnter={() => setHoveredId(product._id)}
+            onMouseLeave={() => setHoveredId(null)}
           >
-            {/* Shimmer overlay */}
-            <div className="absolute inset-0 bg-white/20 animate-pulse pointer-events-none rounded-2xl"></div>
+            {/* Image */}
+            <div className="relative w-full h-50 rounded-2xl overflow-hidden bg-white flex items-center justify-center">
+              {/* Base image */}
+              <img
+                src={product.images?.[0]}
+                alt={product.name}
+                className={`absolute max-h-[85%] max-w-[85%] object-contain transition-opacity duration-500
+                  ${hoveredId === product._id ? "opacity-0" : "opacity-100"}
+                `}
+              />
 
-            <img
-              src={product.image_link}
-              alt={product.name}
-              className="relative max-w-full max-h-64 object-contain p-4"
-            />
+              {/* Hover image */}
+              {product.images?.[1] && (
+                <img
+                  src={product.images[1]}
+                  alt={product.name}
+                  className={`absolute max-h-[85%] max-w-[85%] object-contain transition-opacity duration-500
+                    ${hoveredId === product._id ? "opacity-100" : "opacity-0"}
+                  `}
+                />
+              )}
+            </div>
+
+            {/* Content */}
+            <div className="px-5 pb-6 text-center">
+              {/* Name */}
+              <h3 className="mt-3 text-lg font-medium">
+                {product.name}
+              </h3>
+
+              <p className="mt-1 text-sm text-gray-600">
+  {product.description
+    ?.toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase())}
+</p>
+
+
+               {/* Sale */}
+              <p className="mt-2 text-pink-600 text-sm font-medium mb-2">
+                Last Call! Up to 60% off Select Items
+              </p>
+
+              
+
+              {/* Rating */}
+              <div className="mt-2 text-sm">
+                ★★★★★ <span className="text-gray-500">(6 Reviews)</span>
+              </div>
+
+              {/* Button */}
+              <button className="mt-3 px-4 py-2 border border-black rounded-full font-bold text-sm hover:bg-black hover:text-white transition">
+                add to bag Rs {product.price}
+              </button>
+            </div>
           </div>
         ))}
+
       </div>
-    </div>
+    </section>
   );
 };
 

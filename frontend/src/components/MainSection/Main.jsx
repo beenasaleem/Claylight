@@ -1,15 +1,15 @@
-import Banner from "./Banner";
 import BestProducts from "./BestProducts";
+import BannerTop from "./BannerTop";
 import TrendingProducts from "./TrendingProducts";
-import ChristmasBanner from "./ChristmasBanner";
+import BannerMid from "./BannerMid";
 
 const Main = () => {
   return (
     <main className="flex-1 bg-white-200 flex flex-col gap-4">
-      <Banner />
+      <BannerTop />
       <BestProducts />
+      <BannerMid />
       <TrendingProducts />
-      <ChristmasBanner />
     </main>
   );
 };

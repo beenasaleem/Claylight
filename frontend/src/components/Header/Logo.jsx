@@ -1,10 +1,14 @@
-import LilyLogo from "../../assets/Lily.png";
+import { Link } from "react-router-dom";
+import logo from "../../assets/logo.png";
 
 export default function Logo() {
   return (
-    <div className="flex items-center justify-center">
-    <img src={LilyLogo} alt="Flower Logo" className="h-18 w-auto" />
-    </div>
-
+    <Link to="/">
+      <img
+        src={logo}
+        alt="Claylight"
+        className="cursor-pointer className h-14 md:h-16 w-auto"
+      />
+    </Link>
   );
 }

@@ -1,45 +1,56 @@
 import express from "express";
 import Product from "../models/Product.js";
-import multer from "multer";
-import fs from "fs";
-import { v2 as cloudinary } from "cloudinary";
 
 const router = express.Router();
-const upload = multer({ dest: "uploads/" }); // temporary folder
 
-router.post("/bulk", upload.array("images"), async (req, res) => {
+/* CREATE PRODUCT */
+router.post("/", async (req, res) => {
   try {
-    const productsData = JSON.parse(req.body.products);
-    const savedProducts = [];
-    let fileIndex = 0;
+    const product = new Product(req.body);
+    await product.save();
+    res.status(201).json(product);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create product" });
+  }
+});
 
-    for (let product of productsData) {
-      const productImages = [];
+/* GET ALL PRODUCTS */
+router.get("/", async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch products" });
+  }
+});
 
-      for (let i = 0; i < product.numImages; i++) {
-        const file = req.files[fileIndex];
+/* GET PRODUCT BY ID */
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Not found" });
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching product" });
+  }
+});
 
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: `claylight_products/${product.category || "general"}`,
-        });
+/* 🔴 UPDATE PRODUCT — THIS MUST EXIST */
+router.put("/:id", async (req, res) => {
+  try {
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
-        fs.unlinkSync(file.path);
-        productImages.push(result.secure_url);
-        fileIndex++;
-      }
-
-      const newProduct = new Product({
-        ...product,
-        images: productImages,
-      });
-
-      const saved = await newProduct.save();
-      savedProducts.push(saved);
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found" });
     }
 
-    res.status(201).json(savedProducts);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.json(updatedProduct);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update product" });
   }
 });
 

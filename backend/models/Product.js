@@ -1,13 +1,62 @@
 import mongoose from "mongoose";
 
-const ProductSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-  category: { type: String },
-  description: { type: String },
-  content: { type: String },
-  inStock: { type: Boolean, default: true },
-  image: { type: String }, // will store URL or local path
-});
+const productSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true
+    },
 
-export default mongoose.model("Product", ProductSchema, "products");
+    subtitle: String,
+
+    price: {
+      type: Number,
+      required: true
+    },
+
+    category: {
+      type: String,
+      required: true
+    },
+
+    images: {
+      type: [String],
+      required: true
+    },
+
+    description: {
+      type: String,
+      required: true
+    },
+
+    ingredients: {
+      type: String
+    },
+
+    care: {
+      type: String
+    },
+
+    burnTime: {
+      type: String
+    },
+
+    size: {
+      type: String
+    },
+
+    fragranceNotes: {
+      top: [String],
+      middle: [String],
+      base: [String]
+    },
+
+    inStock: {
+      type: Boolean,
+      default: true
+    }
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("Product", productSchema);

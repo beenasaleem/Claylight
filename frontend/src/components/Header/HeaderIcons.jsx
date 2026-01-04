@@ -1,30 +1,44 @@
-import { Heart, User, ShoppingBag, Globe, Search } from "lucide-react";
+import { ShoppingBag, User, Heart } from "lucide-react";
+import { useCart } from "../../context/CartContext";
 
 export default function HeaderIcons() {
-  return (
-    <div className="flex items-center gap-5">
-      <button className="hover:text-pink-600">
-        <Search size={20} />
-      </button>
+  const { cartCount, setIsCartOpen } = useCart();
 
-      <button className="hover:text-pink-600">
+  return (
+    <div className="flex items-center gap-6">
+
+      {/* Wishlist */}
+      <button className="hover:text-pink-600 transition">
         <Heart size={20} />
       </button>
 
-      <button className="hover:text-pink-600">
+      {/* Profile */}
+      <button className="hover:text-pink-600 transition">
         <User size={20} />
       </button>
 
-      <button className="hover:text-pink-600 relative">
-        <ShoppingBag size={20} />
-        <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
-          2
-        </span>
+      {/* Cart */}
+      <button
+        onClick={() => setIsCartOpen(true)}
+        className="relative hover:text-pink-600 transition"
+      >
+        <ShoppingBag size={22} />
+
+        {/* CART COUNTER BADGE */}
+        {cartCount > 0 && (
+          <span
+            className="
+              absolute -top-2 -right-2
+              bg-black text-white text-[10px]
+              w-5 h-5 rounded-full
+              flex items-center justify-center
+            "
+          >
+            {cartCount}
+          </span>
+        )}
       </button>
 
-      <button className="hover:text-pink-600">
-        <Globe size={20} />
-      </button>
     </div>
   );
 }
