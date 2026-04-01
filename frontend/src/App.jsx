@@ -7,8 +7,8 @@ import ProductDetail from "./pages/ProductDetail";
 import MainSection from "./components/MainSection/Main";
 import { CartProvider } from "./context/CartContext";
 import CartDrawer from "./context/CartDrawer";
-
 import Footer from "./components/Footer/Footer";
+import WishList from "./pages/WishList";
 
 export default function App() {
   return (
@@ -20,7 +20,7 @@ export default function App() {
         <Header />
 
         <main className="flex-grow">
-       <Routes>
+<Routes>
   {/* FIRST PAGE */}
   <Route path="/" element={<MainSection />} />
 
@@ -30,7 +30,10 @@ export default function App() {
   {/* Product detail */}
   <Route path="/product/:id" element={<ProductDetail />} />
 
-  {/* 🔴 FALLBACK → ALWAYS FIRST PAGE */}
+  {/* Wishlist */}
+  <Route path="/wishlist" element={<WishList />} />
+
+  {/* FALLBACK */}
   <Route path="*" element={<MainSection />} />
 </Routes>
 

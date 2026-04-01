@@ -37,6 +37,7 @@ export default function NavMenu() {
 
   return (
     <nav className="relative">
+      {/* top separator */}
       <div className="w-full border-t border-gray-300" />
 
       <ul className="flex justify-center gap-6 py-4 text-sm md:text-base font-medium">
@@ -63,49 +64,88 @@ export default function NavMenu() {
                 {cat.name}
               </Link>
 
-              {/* OLD STYLE DROPDOWN */}
               {cat.slug !== "sale" && items.length > 0 && (
-                <div
-                  className="
-                    absolute left-1/2 top-full -translate-x-1/2
-                    bg-white shadow-xl z-50
-                    opacity-0 invisible group-hover:opacity-100 group-hover:visible
-                    transition-all duration-200
-                  "
-                >
-                  <div className="flex gap-10 px-8 py-6">
-                    {/* LEFT LIST */}
-                    <ul className="w-40 space-y-2">
-                      {items.map((p) => (
-                        <li key={p._id}>
-                          <Link
-                            to={`/product/${p._id}`}
-                            className="block text-gray-700 hover:text-pink-600"
-                          >
-                            {p.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
+  <>
+{/* BACKDROP (NO BLUR) */}
+<div
+  className="
+    fixed inset-0 bg-black/0
+    opacity-0 invisible group-hover:opacity-100 group-hover:visible
+    transition-all duration-200 z-40 pointer-events-none
+  "
+/>
+{/* FULL WIDTH MEGA MENU */}
+<div
+  className="
+    fixed left-0 top-[180px]
+    w-screen
+    bg-white
+    shadow-lg
+    z-[9999]
+    opacity-0 invisible group-hover:opacity-100 group-hover:visible
+    transition-all duration-200
+  "
+>
+  <div className="max-w-6xl mx-auto px-8 py-6 grid grid-cols-4 gap-6">
+    
+    {/* LEFT LIST */}
+    <ul className="space-y-3 col-span-1">
+      {items.map((p) => (
+        <li key={p._id}>
+          <Link
+            to={`/product/${p._id}`}
+            className="block text-gray-700 hover:text-pink-600 text-base"
+          >
+            {p.name}
+          </Link>
+        </li>
+      ))}
+    </ul>
 
-                    {/* RIGHT IMAGES */}
-                    <div className="grid grid-cols-3 gap-4">
-                      {items.slice(0, 3).map((p) => (
-                        <Link
-                          key={p._id}
-                          to={`/product/${p._id}`}
-                          className="w-44 h-44 rounded-xl overflow-hidden bg-gray-100"
-                        >
-                          <img
-                            src={p.images?.[0]}
-                            alt={p.name}
-                            className="w-full h-full object-cover hover:scale-105 transition"
-                          />
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+   {/* RIGHT SIDE PRODUCT CARDS */}
+<div className="col-span-3 grid grid-cols-3 gap-6">
+  {items.slice(0, 3).map((p) => (
+    <Link
+      key={p._id}
+      to={`/product/${p._id}`}
+      className="bg-white transition"
+    >
+      {/* IMAGE WITH ROUNDED CORNERS ONLY */}
+      <div className="h-40 w-full overflow-hidden rounded-xl">
+        <img
+          src={p.images?.[0]}
+          alt={p.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* PRODUCT INFO */}
+      <div className="p-4 text-center space-y-1">
+        <h3 className="font-medium text-gray-800 text-base">{p.name}</h3>
+
+
+        <div className="flex justify-center items-center gap-1 text-black-500 text-sm">
+          {"★".repeat(Math.round(p.rating || 0)) || "★"}
+          <span className="text-gray-500 ml-1 text-xs">
+            ({p.reviews?.length || 0} reviews)
+          </span>
+        </div>
+        <p className="mt-3 px-4 py-2 border border-black rounded-full text-sm
+                hover:bg-black hover:text-white transition">add to bag PKR {p.price}</p>
+      </div>
+    </Link>
+  ))}
+</div>
+
+
+
+  </div>
+</div>
+
+
+
+
+  </>
               )}
             </li>
           );

@@ -189,7 +189,9 @@ export default function ProductDetail() {
 
             <button
               onClick={() => addToCart(product, quantity)}
-              className="bg-black text-white text-sm px-8 py-3 rounded-full hover:bg-gray-800 transition"
+              className="mt-3 px-2 py-2 border border-black rounded-full text-sm
+                hover:bg-black hover:text-white transition"
+
             >
               add to bag PKR {product.price * quantity}
             </button>
